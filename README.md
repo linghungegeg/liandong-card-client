@@ -28,7 +28,6 @@
   <p><strong>广告推荐</strong></p>
   <p><strong>不降质GPT 满血claude调用：</strong> <a href="https://www.1openai.icu/">https://www.1openai.icu/</a><br />
   高质量 不掺水 物超所值  欢迎使用和测试</p>
-  <p>后台-输入激活码即可使用</p>
 </div>
 
 ---

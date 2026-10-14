@@ -28,7 +28,6 @@ Isolated account sessions · Product publishing · TXT / CSV / XLSX import · St
   <p><strong>Advertisement</strong></p>
   <p><strong>GPT without quality degradation. Full-capability Claude API access:</strong> <a href="https://www.1openai.icu/">https://www.1openai.icu/</a><br />
   High quality, no compromises, and great value. Try it and put it to the test.</p>
-  <p>Enter your activation code in the service dashboard to get started.</p>
 </div>
 
 ---
