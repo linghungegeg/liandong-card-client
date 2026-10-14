@@ -1,0 +1,28 @@
+{
+  "name": "liandong-card-client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "dev:desktop": "node scripts/dev.cjs",
+    "build": "vite build --base=./",
+    "start": "npm run build && electron .",
+    "package": "npm run build && electron-packager . LiandongCard --platform=win32 --arch=x64 --electron-version=44.7.2 --out=release/0.1.0 --asar --ignore=^/\\.runtime --ignore=^/\\.research --ignore=^/release --ignore=^/tests --ignore=^/scripts --ignore=^/src",
+    "test": "node --test tests/*.test.cjs",
+    "check": "node --check electron/main.cjs && node --check electron/protocol.cjs && node --check electron/store.cjs && node --check electron/stock.cjs && node --check electron/preload.cjs"
+  },
+  "dependencies": {
+    "@arco-design/web-react": "2.66.18",
+    "@e965/xlsx": "0.20.3",
+    "@wangeditor/editor": "5.1.23",
+    "@wangeditor/editor-for-react": "1.0.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "44.7.2",
+    "vite": "8.3.4"
+  }
+}
