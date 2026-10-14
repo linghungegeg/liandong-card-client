@@ -296,6 +296,23 @@ const handlers = {
     return r.data;
   },
   openOfficial: async (p) => {
+    const win = await accountWindow(p.accountId);
+    const me = await request(p.accountId, "user");
+    if (me.identityMismatch)
+      throw new Error(me.msg || "账号分区身份不匹配，禁止打开其他商户");
+    if (me.code === 1) {
+      store.setIdentity(p.accountId, me.data);
+      if (
+        new URL(win.webContents.getURL()).pathname.replace(/\/$/, "") ===
+        "/merchant/login"
+      ) {
+        const entry = contexts.get(p.accountId);
+        entry.ready = win.loadURL(ORIGIN + "/merchant/goods/list?is_proxy=0");
+        await entry.ready;
+      }
+    } else {
+      store.invalidate(p.accountId, me.msg || "登录失效，请在官网重新登录");
+    }
     await accountWindow(p.accountId, true);
     return true;
   },
@@ -622,7 +639,10 @@ async function boot() {
     sync(a.id).catch((e) => store.invalidate(a.id, e.message));
   return { app, store, stock, request, handlers, contexts, main, files };
 }
-if (require.main === module) {
+if (
+  require.main === module ||
+  app.getAppPath?.() === path.resolve(__dirname, "..")
+) {
   if (!app.requestSingleInstanceLock()) app.quit();
   else
     app

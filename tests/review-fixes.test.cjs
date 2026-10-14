@@ -239,6 +239,53 @@ test('官方会话过期立即暂停账号规则并提示重新登录',async()=>
     assert.equal(f.s.account(f.a).status,'offline');assert.equal(f.s.snapshot().rules[0].enabled,0);
   }finally{f.s.close();}
 });
+test("打开官网复用账号窗口：有效会话离开登录页，失效会话仍可登录，身份变化不展示", async (t) => {
+  for (const scenario of ["valid-login", "valid-goods", "expired", "mismatch"]) {
+    await t.test(scenario, async () => {
+      const f = pipeline([0]);
+      const win = f.hooks.contexts.get(f.a).win;
+      let url = scenario === "valid-goods"
+        ? "https://wzyp.cn/merchant/goods/list?is_proxy=0"
+        : "https://wzyp.cn/merchant/login";
+      let shown = false, focused = false, navigations = 0;
+      win.webContents.getURL = () => url;
+      win.webContents.executeJavaScript = async () => {
+        if (scenario === "expired") return { code: 0, msg: "登录已失效" };
+        if (scenario === "mismatch")
+          return { code: 0, msg: "账号分区身份改变", identityMismatch: true };
+        return { code: 1, data: { id: 1 } };
+      };
+      win.loadURL = async (target) => { url = target; navigations++; };
+      win.show = () => { shown = true; };
+      win.focus = () => { focused = true; };
+      try {
+        if (scenario === "mismatch") {
+          await assert.rejects(
+            () => f.hooks.handlers.openOfficial({ accountId: f.a }),
+            /身份改变/,
+          );
+          assert.equal(shown, false);
+          assert.equal(f.s.snapshot().rules[0].enabled, 0);
+          return;
+        }
+        await f.hooks.handlers.openOfficial({ accountId: f.a });
+        assert.equal(shown && focused, true);
+        assert.equal(f.hooks.contexts.get(f.a).win, win);
+        assert.equal(navigations, scenario === "valid-login" ? 1 : 0);
+        if (scenario === "expired") {
+          assert.equal(new URL(url).pathname, "/merchant/login");
+          assert.equal(f.s.account(f.a).status, "offline");
+          assert.equal(f.s.snapshot().rules[0].enabled, 0);
+        } else {
+          assert.equal(new URL(url).pathname, "/merchant/goods/list");
+          assert.equal(f.s.account(f.a).status, "online");
+        }
+      } finally {
+        f.s.close();
+      }
+    });
+  }
+});
 test("补货和发布记录超过旧上限仍可分页和筛选核实", () => {
   const { s, a } = fixture();
   try {

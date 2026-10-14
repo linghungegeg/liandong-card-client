@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import { setCreateRoot } from "@arco-design/web-react/es/_util/react-dom";
 import {
   Button,
   Select,
@@ -25,7 +26,6 @@ import {
   IconClockCircle,
   IconList,
   IconRefresh,
-  IconLaunch,
   IconSafe,
   IconCheckCircle,
   IconExclamationCircle,
@@ -34,6 +34,7 @@ import { Editor, Toolbar } from "@wangeditor/editor-for-react";
 import "@arco-design/web-react/dist/css/arco.css";
 import "@wangeditor/editor/dist/css/style.css";
 import "./style.css";
+setCreateRoot(createRoot);
 const api = window.liandong;
 const pages = [
   ["仪表盘", IconDashboard],
@@ -871,13 +872,6 @@ function App() {
             ...data.accounts.map((a) => ({ value: a.id, label: a.label })),
           ]}
         />
-        <Button
-          icon={<IconLaunch />}
-          disabled={!current}
-          onClick={() => run(() => api.openOfficial({ accountId: account }))}
-        >
-          打开官网
-        </Button>
       </header>
       <aside>
         {pages.map(([name, Icon]) => (
@@ -984,7 +978,7 @@ function App() {
                             run(() => api.openOfficial({ accountId: a.id }))
                           }
                         >
-                          官网
+                          打开官网
                         </Button>
                       </div>
                     ),

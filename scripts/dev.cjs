@@ -55,7 +55,7 @@ process.on("SIGTERM", () => stop());
     cwd: root,
     env: { ...env, LIANDONG_DEV_URL: url },
     stdio: "inherit",
-    windowsHide: true,
+    windowsHide: false,
   });
   desktop.on("error", (error) => {
     console.error(error.message);
